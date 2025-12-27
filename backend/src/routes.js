@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { fetchIMEIInfo } = require('../src/controller');
+const { fetchIMEIInfo } = require('../src/controller')
 
 router.post('/verify-imei', async (req, res) => {
   const { imei } = req.body;
