@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send("Welcome to IMEI VALIDATION APP");
+  res.send("Welcome to IMEI VALIDATION APP.");
 });
 
 app.use('/api', imeiRoute);
