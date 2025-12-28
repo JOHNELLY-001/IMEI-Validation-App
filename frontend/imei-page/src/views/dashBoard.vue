@@ -10,7 +10,7 @@
   by buyers, sellers, enterprises, and insurers.
 </p>
 
-<div class="flex gap-3 mb-8">
+<div class="flex gap-2.5 mb-8">
   <span class="px-4 py-2 bg-green-600/30 border border-green-400 rounded-full text-green-300 text-xs lg:text-sm">
     ✔ Trusted Insights
   </span>
@@ -32,18 +32,36 @@
   Get Started - Only 50 Tsh
 </router-link>
 
+<!-- <IMEIDocs /> -->
+ 
 
 <!-- Tech Trends Section -->
 <TechTrends />
 
+<!-- Short intro and CTA for learn more -->
+ <p class="max-w-3xl text-center text-gray-800 mb-5 mt-4">
+   Learn more about IMEI and how it protects your device.
+ </p>
+ <router-link
+   to="/docs"
+   class="animate-pulse px-6 py-3 bg-linear-to-r from-green-500 to-blue-500 
+          text-white rounded-lg shadow-lg hover:from-green-600 hover:to-blue-600
+          transition-all duration-300 inline-block"
+ >
+   Learn More
+ </router-link>
+
     <!-- <Home /> -->
+     <FoooterPage />
   </div>
 </template>
 
 <script>
 import Home from '../views/Home.vue'
 import TechTrends from '../components/techTrends.vue'
+import IMEIDocs from '../views/IMEIDocs.vue';
+import FoooterPage from '../components/foooterPage.vue';
 
 
-export default { components: { Home, TechTrends } }
+export default { components: { Home, TechTrends, IMEIDocs, FoooterPage } }
 </script>
