@@ -1,51 +1,40 @@
 <template>
-  <div class="border border-neon rounded-xl p-4 bg-darkbg/60 shadow-lg mt-4">
-    <h2 class="text-xl font-bold text-accent mb-2">Anti-Fake & Authenticity Check</h2>
+  <div class="border border-red-300 rounded p-4 mt-4">
+    <h3 class="text-xl font-bold mb-2 text-red-400">Anti-Fake Detector</h3>
 
-    <div
-      class="text-center py-4 rounded-lg"
-      :class="badgeClass"
-    >
-      <p class="text-2xl font-bold">{{ statusLabel }}</p>
-      <p class="text-sm opacity-80 mt-1">{{ confidenceMessage }}</p>
-    </div>
+    <p class="text-xl font-bold"
+       :class="statusColor">
+       <!-- Star label -->
+        <span class="text-yellow-400">★</span>
+      {{ statusLabel }}
+    </p>
 
-    <ul class="mt-4 space-y-1 text-sm">
-      <li>✔ IMEI ↔ Model Match: {{ flags.modelMatch ? "Yes" : "No" }}</li>
-      <li>✔ Region Valid: {{ flags.regionValid ? "Yes" : "No" }}</li>
-      <li>✔ Clone Risk Level: {{ flags.cloneRisk }}</li>
-    </ul>
+    <p class="mt-2 text-gray-400"><span class="text-gray-600 font-semibold">Remarks:</span> {{ statusMessage }}</p>
   </div>
 </template>
 
 <script>
 export default {
-  props: {
-    authenticity: {
-      type: Object,
-      required: true,
-      // Expected:
-      // { status: "authentic" | "suspicious" | "fake", confidence: 0-100, flags:{} }
-    }
-  },
+  props: ['data'],
+
   computed: {
+    isSuspicious() {
+      return !this.data.manufacturer || !this.data.model
+    },
+
     statusLabel() {
-      if (this.authenticity.status === "authentic") return "Authentic Device"
-      if (this.authenticity.status === "suspicious") return "Suspicious Device"
-      return "Likely Counterfeit"
+      return this.isSuspicious ? "Potential Clone / Unknown" : "Genuine Identity"
     },
-    badgeClass() {
-      return {
-        "bg-green-700/40 border border-green-400": this.authenticity.status === "authentic",
-        "bg-yellow-700/40 border border-yellow-400": this.authenticity.status === "suspicious",
-        "bg-red-700/40 border border-red-400": this.authenticity.status === "fake",
-      }
+
+    statusMessage() {
+      if (this.isSuspicious)
+        return "IMEI exists but lacks solid manufacturer identity. Cross-verify before purchase."
+      
+      return "Device identity matches known manufacturer records."
     },
-    flags() {
-      return this.authenticity.flags || {}
-    },
-    confidenceMessage() {
-      return `Confidence: ${this.authenticity.confidence}%`
+
+    statusColor() {
+      return this.isSuspicious ? "text-yellow-300" : "text-green-400"
     }
   }
 }

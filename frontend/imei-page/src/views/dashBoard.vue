@@ -24,12 +24,12 @@
 
 <!-- CTA Button -->
 <router-link
-  to="/payment"
+  to="/home"
   class="animate-pulse px-6 py-3 bg-linear-to-r from-green-500 to-blue-500 
          text-white rounded-lg shadow-lg hover:from-green-600 hover:to-blue-600
          transition-all duration-300 inline-block"
 >
-  Get Started - Only 50 Tsh
+  Get Started - Only 500 Tsh
 </router-link>
 
 <!-- <IMEIDocs /> -->

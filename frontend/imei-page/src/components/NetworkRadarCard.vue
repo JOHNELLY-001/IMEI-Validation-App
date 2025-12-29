@@ -1,24 +1,49 @@
 <template>
-  <div class="border border-neon rounded-xl p-4 bg-darkbg/60 shadow-lg mt-4">
-    <h2 class="text-xl font-bold text-accent mb-2">Network Compatibility Radar</h2>
+  <div class="border border-blue-400 rounded p-4 mt-4">
+    <h3 class="text-xl font-bold mb-2 text-blue-500">Network Compatibility Radar</h3>
 
-    <div class="space-y-3">
-      <div v-for="item in metrics" :key="item.label">
-        <div class="flex justify-between text-sm">
-          <span>{{ item.label }}</span>
-          <span>{{ item.value }}%</span>
-        </div>
+    <!-- Bands Count -->
+    <p class="text-gray-400">
+      Supported Bands: <strong>{{ totalBands }}</strong>
+    </p>
 
-        <div class="w-full h-2 bg-gray-700 rounded">
-          <div
-            class="h-full rounded transition-all duration-700"
-            :style="{ width: item.value + '%', background: item.color }"
-          ></div>
-        </div>
-      </div>
+    <!-- GENERATION SUPPORT -->
+    <div class="mt-4">
+      <h4 class="font-semibold text-blue-300 mb-1">Cellular Technology Support</h4>
+
+      <p :class="supportClass(genSupport.g2)">
+        2G (GSM): {{ genSupport.g2 ? 'Supported' : 'Not Supported' }}
+      </p>
+
+      <p :class="supportClass(genSupport.g3)">
+        3G (WCDMA/UMTS): {{ genSupport.g3 ? 'Supported' : 'Not Supported' }}
+      </p>
+
+      <p :class="supportClass(genSupport.g4)">
+        4G LTE: {{ genSupport.g4 ? 'Supported' : 'Not Supported' }}
+      </p>
     </div>
 
-    <p class="mt-4 text-sm text-gray-300 italic">
+    <!-- CARRIER CHECK -->
+    <div class="mt-4">
+      <h4 class="font-semibold text-blue-300 mb-1">Tanzania Carrier Compatibility</h4>
+
+      <p :class="supportClass(carriers.tigo)">YAS</p>
+      <p :class="supportClass(carriers.vodacom)">Vodacom</p>
+      <p :class="supportClass(carriers.airtel)">Airtel</p>
+      <p :class="supportClass(carriers.halotel)">Halotel</p>
+    </div>
+
+    <!-- Frequencies List -->
+    <h4 class="font-semibold text-blue-300 mt-4">Frequency Bands</h4>
+    <ul class="mt-2 text-gray-400 list-disc pl-4 max-h-40 overflow-y-auto">
+      <li v-for="(band, index) in data.frequency" :key="index">
+        {{ band }}
+      </li>
+    </ul>
+
+    <!-- Insight -->
+    <p class="mt-4 text-sm text-gray-500 italic">
       {{ insight }}
     </p>
   </div>
@@ -26,31 +51,53 @@
 
 <script>
 export default {
-  props: {
-    radar: {
-      type: Object,
-      required: true,
-      // Expected:
-      // { lte: 85, fiveg: 72, indoor: 60, regional: 95 }
+  props: ['data'],
+
+  computed: {
+    totalBands() {
+      return this.data.frequency?.length || 0
+    },
+
+    freq() {
+      return this.data.frequency || []
+    },
+
+    // ---------- NETWORK GENERATIONS ----------
+    genSupport() {
+      return {
+        g2: this.freq.some(f => f.includes('GSM')),
+        g3: this.freq.some(f => f.includes('WCDMA')),
+        g4: this.freq.some(f => f.includes('LTE')),
+      }
+    },
+
+    // ---------- CARRIER MAPPING ----------
+    carriers() {
+      const bands = this.freq.join(' ')
+
+      return {
+        // Based on most deployed Tanzania bands
+        tigo: bands.match(/BAND 3|BAND 1|BAND 20|BAND 28/i),
+        vodacom: bands.match(/BAND 3|BAND 20|BAND 1/i),
+        airtel: bands.match(/BAND 3|BAND 8|BAND 1/i),
+        halotel: bands.match(/BAND 3|BAND 8|BAND 41/i),
+      }
+    },
+
+    insight() {
+      if (!this.genSupport.g4) return "Device may struggle on modern networks — lacks 4G LTE support."
+      if (!this.carriers.vodacom && !this.carriers.tigo && !this.carriers.airtel) 
+        return "Device has LTE but bands do not fully match major Tanzania carriers."
+
+      return "This device is broadly compatible with Tanzania networks and should perform well."
     }
   },
-  computed: {
-    metrics() {
-      return [
-        { label: "LTE Support", value: this.radar.lte, color: "#0ff" },
-        { label: "5G Capability", value: this.radar.fiveg, color: "#9d4dff" },
-        { label: "Indoor Signal Strength", value: this.radar.indoor, color: "#4dff9d" },
-        { label: "Regional Compatibility", value: this.radar.regional, color: "#ff4df7" },
-      ]
-    },
-    insight() {
-      if (this.radar.indoor < 50)
-        return "Great outdoors but weak indoors — likely missing Band 28."
 
-      if (this.radar.fiveg < 40)
-        return "Limited 5G readiness — best performance on LTE networks."
-
-      return "This device is highly compatible with your regional carriers."
+  methods: {
+    supportClass(isSupported) {
+      return isSupported
+        ? "text-green-400 font-semibold"
+        : "text-red-400"
     }
   }
 }
