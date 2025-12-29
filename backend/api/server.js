@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const imeiRoute = require('../src/routes');
+const imeiRoute = require('../src/routes/routes');
+const paymentRoute = require('../src/routes/paymentRoute');
 
 const app = express();
 const PORT = 3000;
@@ -13,6 +14,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', imeiRoute);
+app.use('/api/payments', paymentRoute);
 
 app.listen(PORT, () => {
   console.log(`IMEI VERIFICATION API running on http://localhost:${PORT}`);
